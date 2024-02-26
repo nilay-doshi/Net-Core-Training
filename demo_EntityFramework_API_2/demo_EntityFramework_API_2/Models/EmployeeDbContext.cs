@@ -8,7 +8,6 @@ public partial class EmployeeDbContext : DbContext
 {
     public EmployeeDbContext()
     {
-
     }
 
     public EmployeeDbContext(DbContextOptions<EmployeeDbContext> options)
@@ -44,6 +43,9 @@ public partial class EmployeeDbContext : DbContext
             entity.ToTable("Employee");
 
             entity.Property(e => e.DepartmentId).HasColumnName("DepartmentID");
+            entity.Property(e => e.EmployeeAge)
+                .HasMaxLength(80)
+                .IsUnicode(false);
             entity.Property(e => e.EmployeeGender)
                 .HasMaxLength(80)
                 .IsUnicode(false);

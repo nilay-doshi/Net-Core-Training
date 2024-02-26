@@ -30,7 +30,6 @@ namespace demo_EntityFramework_API_2.Controllers
                    EmployeeSalary = x.EmployeeSalary,
                    DepartmentName = d.DepartmentName
                }).ToListAsync();
-
             return res;
         }
 

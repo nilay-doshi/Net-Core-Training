@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text.Json.Serialization;
 
 namespace demo_EntityFramework_API_2.Models;
 
@@ -14,8 +13,9 @@ public partial class Employee
 
     public string EmployeeGender { get; set; } = null!;
 
-
     public int DepartmentId { get; set; }
-    [JsonIgnore]
-    public virtual Department? Department { get; set; } = null!;
+
+    public string? EmployeeAge { get; set; }
+
+    public virtual Department Department { get; set; } = null!;
 }

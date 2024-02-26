@@ -32,7 +32,6 @@ namespace demo_EntityFramework_API_2.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DepartmentId"));
 
                     b.Property<string>("DepartmentName")
-                        .IsRequired()
                         .HasMaxLength(80)
                         .IsUnicode(false)
                         .HasColumnType("varchar(80)");
@@ -55,6 +54,9 @@ namespace demo_EntityFramework_API_2.Migrations
                         .HasColumnType("int")
                         .HasColumnName("DepartmentID");
 
+                    b.Property<string>("EmployeeAge")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("EmployeeGender")
                         .IsRequired()
                         .HasMaxLength(80)
@@ -66,10 +68,6 @@ namespace demo_EntityFramework_API_2.Migrations
                         .HasMaxLength(100)
                         .IsUnicode(false)
                         .HasColumnType("varchar(100)");
-
-                    b.Property<string>("EmployeeParentName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<float?>("EmployeeSalary")
                         .HasColumnType("real");

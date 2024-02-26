@@ -5,7 +5,7 @@
 namespace demo_EntityFramework_API_2.Migrations
 {
     /// <inheritdoc />
-    public partial class employeeparentname : Migration
+    public partial class AddedemployeeAde : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -16,7 +16,7 @@ namespace demo_EntityFramework_API_2.Migrations
                 {
                     DepartmentID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    DepartmentName = table.Column<string>(type: "varchar(80)", unicode: false, maxLength: 80, nullable: false)
+                    DepartmentName = table.Column<string>(type: "varchar(80)", unicode: false, maxLength: 80, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -32,8 +32,8 @@ namespace demo_EntityFramework_API_2.Migrations
                     EmployeeName = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: false),
                     EmployeeSalary = table.Column<float>(type: "real", nullable: true),
                     EmployeeGender = table.Column<string>(type: "varchar(80)", unicode: false, maxLength: 80, nullable: false),
-                    DepartmentID = table.Column<int>(type: "int", nullable: false),
-                    EmployeeParentName = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    EmployeeAge = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DepartmentID = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
