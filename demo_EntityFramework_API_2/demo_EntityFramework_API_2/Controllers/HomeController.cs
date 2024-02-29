@@ -1,5 +1,4 @@
 ﻿using demo_EntityFramework_API_2.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -88,7 +87,7 @@ namespace demo_EntityFramework_API_2.Controllers
             if (std == null)
                 return NotFound();
             employeeDb.Employees.Remove(std);
-            await employeeDb.SaveChangesAsync();    
+            await employeeDb.SaveChangesAsync();
             return Ok(" Data deleted successfully");
         }
 

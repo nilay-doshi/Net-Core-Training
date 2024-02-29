@@ -1,10 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Team_Project.Models
 {
     public class Coach
     {
-        public Guid id { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Coachid { get; set; }
 
         [EmailAddress(ErrorMessage = "Email address is required")]
         [Key]
