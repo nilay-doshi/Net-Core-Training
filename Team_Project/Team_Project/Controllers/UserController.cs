@@ -23,7 +23,7 @@ namespace Team_Project.Controllers
         private readonly ILogger _logger;
         private readonly IConfiguration _configuration;
 
-        public UserController(IUserRepository userRepository, IEmailService emailService, IPasswordHasher<UserRegistration> passwordHasher, IConfiguration configuration, TeamDbContext dbContext, ILogger logger)
+        public UserController(IUserRepository userRepository, IEmailService emailService, IPasswordHasher<UserRegistration> passwordHasher, IConfiguration configuration, TeamDbContext dbContext, ILogger<UserController> logger)
         {
 
             _userRepository = userRepository;
@@ -100,7 +100,7 @@ namespace Team_Project.Controllers
             var user = await _userRepository.GetUserByEmail(userlogin.Email, userlogin.Password);
             
             string token = CreateToken(userlogin);
-
+            
           //  var resultpassword = _passwordHasher.VerifyHashedPassword(user, user.Password, userlogin.Password);
 
             if (user == null)
@@ -130,6 +130,7 @@ namespace Team_Project.Controllers
                  expires: DateTime.Now.AddDays(1),
                  signingCredentials: credentials);
             var jwt = new JwtSecurityTokenHandler().WriteToken(token);
+            
             return jwt;
         }
     }   

@@ -9,7 +9,13 @@ namespace Team_Project.Repository
       public Task<UserRegistration> AddUser(UserRegistration userRegistration);
       public Task<ActionResult<string>> GetUserByEmail(string email, string Password);
       public ActionResult<string> GetUserByEmail1(string email);
-
-
+      public Task<List<UserRegistration>> SavePlayers(string[] playersEmail);
+      public Task<List<UserRegistration?>> SavePlayersByCaptain(string[] playersEmail);
+      public UserRegistration? SaveCaptain(string captainEmail);
+      public UserRegistration? verifyCaptain(string captainEmail);
+      public int getPlayerCount();
+      public DashboardDTO getCaptain();
+      public List<DashboardDTO> getPlayers();
+        public async Task<DashboardDTO> getCoach();
     }
 }

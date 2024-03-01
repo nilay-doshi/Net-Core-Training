@@ -6,6 +6,8 @@ using System.Text;
 using Team_Project.EmailService;
 using Team_Project.Models;
 using Team_Project.Repository;
+using Swashbuckle.AspNetCore.Filters;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,18 +30,23 @@ builder.Services.AddControllers();
 builder.Services.AddSingleton<IEmailService, EmailService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IPasswordHasher<UserRegistration>,PasswordHasher<UserRegistration>>();
-builder.Services.AddScoped<ILogger, Logger<UserloginDTO>>();
-builder.Services.AddScoped<IPasswordHasher<UserloginDTO>, PasswordHasher<UserloginDTO>>();
 
-
-
-var provider = builder.Services.BuildServiceProvider();
-var config = provider.GetRequiredService<IConfiguration>();
-builder.Services.AddDbContext<TeamDbContext>(item => item.UseSqlServer(config.GetConnectionString("dbcs")));
+builder.Services.AddDbContext<TeamDbContext>(item => item.UseSqlServer(builder.Configuration.GetConnectionString("dbcs")));
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.AddSecurityDefinition("oauth2", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+    {
+        Description = "Standard Authorization header using the bearer scheme (\"bearer {token}\")",
+        In = ParameterLocation.Header,
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey
+
+    });
+    options.OperationFilter<SecurityRequirementsOperationFilter>();
+});
 
 var app = builder.Build();
 
