@@ -88,6 +88,34 @@ namespace Team_Project.Repository
             }
         }
 
+        public string updatePassword(string email, string password)
+        {
+            try
+            {
+                var user = _dbContext.Registration.
+                            Where(u=> u.Email == email)
+                            .FirstOrDefault();
+                if(user != null)
+                {
+                    user.Password = password;
+                    _dbContext.SaveChanges();
+                    user.Password = null;
+
+                    return "Password updated successfully";
+                }
+                else
+                {
+                    return "User not found";
+                }
+
+            }
+            catch(Exception ex)
+            {
+                string errorMessage = ex.Message;
+                throw new NotImplementedException(errorMessage);    
+            }
+        }
+
         public async Task<List<UserRegistration>> SavePlayers(string[] playersEmail)
         {
             try

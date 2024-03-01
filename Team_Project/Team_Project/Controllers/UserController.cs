@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -19,32 +18,33 @@ namespace Team_Project.Controllers
         private readonly IUserRepository _userRepository;
         private readonly IEmailService _emailService;
         private readonly IPasswordHasher<UserRegistration> _passwordHasher;
+        private readonly IPasswordHasher<ForgotPasswordDTO> _passwordHasher1;
         private readonly TeamDbContext _dbContext;
         private readonly ILogger _logger;
         private readonly IConfiguration _configuration;
 
-        public UserController(IUserRepository userRepository, IEmailService emailService, IPasswordHasher<UserRegistration> passwordHasher, IConfiguration configuration, TeamDbContext dbContext, ILogger<UserController> logger)
+        public UserController(IUserRepository userRepository, IEmailService emailService, IPasswordHasher<UserRegistration> passwordHasher, IPasswordHasher<ForgotPasswordDTO> passwordHasher1, IConfiguration configuration, TeamDbContext dbContext, ILogger<UserController> logger)
         {
 
             _userRepository = userRepository;
             _emailService = emailService;
             _passwordHasher = passwordHasher;
+            _passwordHasher1 = passwordHasher1;
             _configuration = configuration;
             _dbContext = dbContext;
             _logger = logger;
         }
 
-        [HttpPost("AddNewUser")]
-        public async Task<IActionResult> AddUser([FromBody] UserRegistration userRegistration)
+        [HttpPost("addUser")]
+        public async Task<IActionResult> addUser([FromBody] UserRegistration userRegistration)
         {
-            if (userRegistration.Email == null || userRegistration.Password == null)
-            {
-                return BadRequest("Invalid User Data");
-            }
-
             try
             {
-                //          var registeruser1 = _userService.AddUser(userRegistration);
+                if (userRegistration.Email == null || userRegistration.Password == null)
+                {
+                    return BadRequest("Invalid User Data");
+                }
+
                 userRegistration.Password = "team1234";
                 userRegistration.Password = _passwordHasher.HashPassword(userRegistration, userRegistration.Password);
                 var user = await _userRepository.AddUser(userRegistration);
@@ -60,8 +60,8 @@ namespace Team_Project.Controllers
         }
 
         [AllowAnonymous]
-        [HttpPost("LoginWITHOUTJWT")]
-        public async Task<IActionResult> LoginUser1(UserloginDTO userlogin)
+        [HttpPost("loginwithoutJwt")]
+        public async Task<IActionResult> loginwithoutJwt(UserloginDTO userlogin)
         {
             if (userlogin == null)
             {
@@ -92,23 +92,22 @@ namespace Team_Project.Controllers
         }
 
         [AllowAnonymous]
-        [HttpPost("LoginWITHJWT")]
-        public async Task<ActionResult<string>> LOGINWITHJWT(UserloginDTO userlogin)
+        [HttpPost("loginwithJwt")]
+        public async Task<ActionResult<string>> loginwithJwt(UserloginDTO userlogin)
         {
             if (userlogin == null || string.IsNullOrEmpty(userlogin.Email) || string.IsNullOrEmpty(userlogin.Password))
                 return BadRequest("Invalid Login details");
             var user = await _userRepository.GetUserByEmail(userlogin.Email, userlogin.Password);
-            
+
             string token = CreateToken(userlogin);
-            
-          //  var resultpassword = _passwordHasher.VerifyHashedPassword(user, user.Password, userlogin.Password);
+
+            //  var resultpassword = _passwordHasher.VerifyHashedPassword(user, user.Password, userlogin.Password);
 
             if (user == null)
                 return NotFound("user not found");
 
             return Ok(token);
         }
-
         private string CreateToken(UserloginDTO userlogin)
         {
             var user = _userRepository.GetUserByEmail1(userlogin.Email);
@@ -130,8 +129,39 @@ namespace Team_Project.Controllers
                  expires: DateTime.Now.AddDays(1),
                  signingCredentials: credentials);
             var jwt = new JwtSecurityTokenHandler().WriteToken(token);
-            
+
             return jwt;
         }
-    }   
+
+        [Authorize]
+        [HttpPost("forgotPassword")]
+        public string forgotPassoword(ForgotPasswordDTO forgotpassword)
+        {
+            try
+            {
+                if (forgotPassoword == null || string.IsNullOrEmpty(forgotpassword.newPassword))
+                    return BadRequest("Enter Valid Password").ToString();
+
+                var emailClaim = User.Claims.FirstOrDefault(c => c.Type == "email")?.Value;
+
+                if (string.IsNullOrEmpty(emailClaim))
+                    return BadRequest("Enter Valid Password to your login").ToString();
+
+                //     var user = _userRepository.GetUserByEmail1(emailClaim);
+                //    if (user == null)
+                //        return BadRequest().ToString();
+
+                forgotpassword.newPassword = _passwordHasher1.HashPassword(forgotpassword, forgotpassword.newPassword);
+                var updatePassword = _userRepository.updatePassword(emailClaim, forgotpassword.newPassword);
+
+                return updatePassword.ToString();
+            }
+            catch(Exception ex) 
+            {
+                string errorMessage = ex.Message;
+                throw new Exception(errorMessage);
+            }
+        }
+
+    }
 }

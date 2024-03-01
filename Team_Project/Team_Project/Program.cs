@@ -30,6 +30,7 @@ builder.Services.AddControllers();
 builder.Services.AddSingleton<IEmailService, EmailService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IPasswordHasher<UserRegistration>,PasswordHasher<UserRegistration>>();
+builder.Services.AddScoped<IPasswordHasher<ForgotPasswordDTO>,PasswordHasher<ForgotPasswordDTO>>();
 
 builder.Services.AddDbContext<TeamDbContext>(item => item.UseSqlServer(builder.Configuration.GetConnectionString("dbcs")));
 
