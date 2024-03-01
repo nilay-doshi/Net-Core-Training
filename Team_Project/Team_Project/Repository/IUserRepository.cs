@@ -16,6 +16,6 @@ namespace Team_Project.Repository
       public int getPlayerCount();
       public DashboardDTO getCaptain();
       public List<DashboardDTO> getPlayers();
-        public async Task<DashboardDTO> getCoach();
+      public Task<DashboardDTO> getCoach();
     }
 }
