@@ -135,7 +135,7 @@ namespace Team_Project.Repository
                     afteraddCount = Checkplayerscount + playersEmail.Length;
                 }
 
-                if (Checkplayerscount > 14 || afteraddCount >= 15)
+                if (Checkplayerscount > 14 || afteraddCount > 15)
                 {
                     return null;
                 }
@@ -168,7 +168,7 @@ namespace Team_Project.Repository
             try
             {
                 var checkCaptain = _dbContext.Registration
-           .FirstOrDefault(u => u.Email == captainEmail && u.FlagRole == 2);
+           .FirstOrDefault(u => u.FlagRole == 2);
                 if (checkCaptain != null)
                 {
                     return checkCaptain;
@@ -247,6 +247,7 @@ namespace Team_Project.Repository
             {
                 var verify = _dbContext.Registration.FindAsync(captainEmail);
                 verify.Result.Password = null;
+                
                 return verify.Result;
 
             }
@@ -262,10 +263,9 @@ namespace Team_Project.Repository
             try
             {
                 var countPlayer = _dbContext.Registration.CountAsync(u => u.FlagRole == 1 );
-
                 var countCaptain = _dbContext.Registration.CountAsync(u => u.FlagRole == 2);
-
                 var totalCount = 0;
+
                 if (countCaptain.Result > 0)
                 {
                     totalCount = countPlayer.Result + 1;
@@ -290,7 +290,7 @@ namespace Team_Project.Repository
             try
             {
                 var captainNameDb = _dbContext.Registration
-                                      .Where(u => u.FlagRole == 1)
+                                      .Where(u => u.FlagRole == 2)
                                       .Select(u => new { u.FirstName, u.Email })
                                       .FirstOrDefault();
 
@@ -348,14 +348,18 @@ namespace Team_Project.Repository
                                   .Where(u => u.FlagRole == 5)
                                   .Select(u => new { u.FirstName, u.Email })
                                   .FirstOrDefault();
-
-                DashboardDTO dashboard = new DashboardDTO()
+                if (coachNameDb != null)
                 {
-                    coachName = coachNameDb.FirstName,
-                    coachEmail = coachNameDb.Email
-                };
+                    DashboardDTO dashboard = new DashboardDTO()
+                    {
+                        coachName = coachNameDb.FirstName,
+                        coachEmail = coachNameDb.Email
+                    };
 
-                return dashboard;
+                    return dashboard;
+                }
+                return null;
+                
             }
             catch(Exception ex) 
             {

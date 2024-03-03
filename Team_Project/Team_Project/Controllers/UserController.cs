@@ -134,12 +134,12 @@ namespace Team_Project.Controllers
         }
 
         [Authorize]
-        [HttpPost("forgotPassword")]
-        public string forgotPassoword(ForgotPasswordDTO forgotpassword)
+        [HttpPost("updatePassword")]
+        public string updatePassoword(ForgotPasswordDTO forgotpassword)
         {
             try
             {
-                if (forgotPassoword == null || string.IsNullOrEmpty(forgotpassword.newPassword))
+                if (forgotpassword == null || string.IsNullOrEmpty(forgotpassword.newPassword))
                     return BadRequest("Enter Valid Password").ToString();
 
                 var emailClaim = User.Claims.FirstOrDefault(c => c.Type == "email")?.Value;
@@ -147,13 +147,10 @@ namespace Team_Project.Controllers
                 if (string.IsNullOrEmpty(emailClaim))
                     return BadRequest("Enter Valid Password to your login").ToString();
 
-                //     var user = _userRepository.GetUserByEmail1(emailClaim);
-                //    if (user == null)
-                //        return BadRequest().ToString();
-
                 forgotpassword.newPassword = _passwordHasher1.HashPassword(forgotpassword, forgotpassword.newPassword);
                 var updatePassword = _userRepository.updatePassword(emailClaim, forgotpassword.newPassword);
-
+                _emailService.SendEmail(emailClaim, "Password changed", "Your password has been updated. Thank You");
+               
                 return updatePassword.ToString();
             }
             catch(Exception ex) 
