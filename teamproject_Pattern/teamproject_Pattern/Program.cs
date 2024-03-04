@@ -2,12 +2,15 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using Team_Project.EmailService;
-using Team_Project.Models;
-using Team_Project.Repository;
-using Swashbuckle.AspNetCore.Filters;
 using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.Filters;
+using System.Text;
+using teamproject__Repository;
+using teamproject__Repository.Interface;
+using teamproject_Repository.Models;
+using teamproject_Repository.Repository;
+using teamproject_Service.Interface;
+using teamproject_Service.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,14 +28,14 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
         };
     });
-builder.Services.AddHttpContextAccessor();
+
+
 builder.Services.AddControllers();
 builder.Services.AddSingleton<IEmailService, EmailService>();
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IPasswordHasher<UserRegistration>,PasswordHasher<UserRegistration>>();
-builder.Services.AddScoped<IPasswordHasher<ForgotPasswordDTO>,PasswordHasher<ForgotPasswordDTO>>();
+builder.Services.AddScoped<IUserRespository, UserRepository>();
+builder.Services.AddScoped<IPasswordHasher<UserRegistration>, PasswordHasher<UserRegistration>>();
 
-builder.Services.AddDbContext<TeamDbContext>(item => item.UseSqlServer(builder.Configuration.GetConnectionString("dbcs")));
+builder.Services.AddDbContext<TeamDbContext>(item => item.UseSqlServer(builder.Configuration.GetConnectionString("dbcs"), b => b.MigrationsAssembly("teamproject_Pattern")));
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -60,8 +63,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseAuthentication();
-app.UseAuthorization(); 
+app.UseAuthorization();
 
 app.MapControllers();
 

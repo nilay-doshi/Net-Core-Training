@@ -20,10 +20,11 @@ namespace Team_Project.Controllers
         private readonly IPasswordHasher<UserRegistration> _passwordHasher;
         private readonly IPasswordHasher<ForgotPasswordDTO> _passwordHasher1;
         private readonly TeamDbContext _dbContext;
-        private readonly ILogger _logger;
         private readonly IConfiguration _configuration;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public UserController(IUserRepository userRepository, IEmailService emailService, IPasswordHasher<UserRegistration> passwordHasher, IPasswordHasher<ForgotPasswordDTO> passwordHasher1, IConfiguration configuration, TeamDbContext dbContext, ILogger<UserController> logger)
+
+        public UserController(IUserRepository userRepository, IEmailService emailService, IPasswordHasher<UserRegistration> passwordHasher, IPasswordHasher<ForgotPasswordDTO> passwordHasher1, IConfiguration configuration, TeamDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         {
 
             _userRepository = userRepository;
@@ -32,7 +33,7 @@ namespace Team_Project.Controllers
             _passwordHasher1 = passwordHasher1;
             _configuration = configuration;
             _dbContext = dbContext;
-            _logger = logger;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         [HttpPost("addUser")]
@@ -117,7 +118,7 @@ namespace Team_Project.Controllers
 
             List<Claim> claims = new List<Claim>
             {
-            new Claim(ClaimTypes.Email, userlogin.Email),
+            new Claim("email", userlogin.Email),
             new Claim(ClaimTypes.Role, FlagRole)
             };
 
@@ -142,10 +143,10 @@ namespace Team_Project.Controllers
                 if (forgotpassword == null || string.IsNullOrEmpty(forgotpassword.newPassword))
                     return BadRequest("Enter Valid Password").ToString();
 
-                var emailClaim = User.Claims.FirstOrDefault(c => c.Type == "email")?.Value;
-
-                if (string.IsNullOrEmpty(emailClaim))
-                    return BadRequest("Enter Valid Password to your login").ToString();
+                string emailClaim = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(x => x.Type == "email").Value ?? "";
+                
+             //   if (string.IsNullOrEmpty(emailAddress))
+              //      return BadRequest("Enter Valid Password to your login").ToString();
 
                 forgotpassword.newPassword = _passwordHasher1.HashPassword(forgotpassword, forgotpassword.newPassword);
                 var updatePassword = _userRepository.updatePassword(emailClaim, forgotpassword.newPassword);
