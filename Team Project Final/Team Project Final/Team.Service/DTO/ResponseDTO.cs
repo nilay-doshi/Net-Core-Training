@@ -15,5 +15,7 @@ namespace Team.Service.DTO
         public string? Error { get; set; }
 
         public string? token { get; set; }
+
+        public string? allData { get; set; }
     }
 }

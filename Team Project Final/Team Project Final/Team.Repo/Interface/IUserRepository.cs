@@ -11,8 +11,7 @@ namespace Team.Repo.Interface
     {
         Task Adduser(UserRegistration userRegistration);
         Task<UserRegistration> CheckUserAuthAsync(string email, string password);
-
         Task<string> GetUserByEmail1(string email);
-        Task SavePlayers(string[] playersEmail);
+        Task<string> updatePassword(string email, string Password);
     }
 }

@@ -1,10 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Data.SqlTypes;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Team.Repo.DTO;
 using Team.Repo.Interface;
 using Team.Repo.Models;
 
@@ -15,7 +10,7 @@ namespace Team.Repo.Repositories
         private readonly TeamDBContext _dbContext;
         public TeamRepository(TeamDBContext dbcontext)
         {
-           _dbContext = dbcontext;
+            _dbContext = dbcontext;
         }
 
         public async Task<string> checkCaptaincount()
@@ -25,7 +20,6 @@ namespace Team.Repo.Repositories
             return Checkcaptaincount.ToString();
 
         }
-
         public async Task<string> checkPlayercount()
         {
             var Checkplayerscount = await _dbContext.Registration
@@ -71,8 +65,85 @@ namespace Team.Repo.Repositories
             }
         }
 
+        public async Task<DashBoardDTO> getCaptain()
+        {
+            try
+            {
+                var captainNameDb = _dbContext.Registration
+                                     .Where(u => u.FlagRole == 2)
+                                     .Select(u => new { u.FirstName, u.Email })
+                                     .FirstOrDefault();
 
+                DashBoardDTO dashboard = new DashBoardDTO()
+                {
+                    captainName = captainNameDb.FirstName,
+                    captainEmail = captainNameDb.Email
+                };
 
+                return dashboard;
+            }
+            catch (Exception ex)
+            {
+                string errorMessage = ex.Message;
+                throw new NotImplementedException(errorMessage);
+            }
+        }
 
+        public async Task<List<DashBoardDTO>> getallPlayers()
+        {
+            try
+            {
+                var players = _dbContext.Registration
+                              .Where(u => u.FlagRole == 1 || u.FlagRole == 2)
+                              .Select(u => new { u.Email, u.FirstName })
+                              .ToList();
+
+                var playerList = new List<DashBoardDTO>();
+
+                foreach (var player in players)
+                {
+                    var dashboardDTO = new DashBoardDTO()
+                    {
+                        playerEmail = player.Email,
+                        playerName = player.FirstName
+                    };
+                    playerList.Add(dashboardDTO);
+                }
+
+                return playerList;
+            }
+            catch (Exception ex)
+            {
+                string errorMessage = ex.Message;
+                throw new NotImplementedException(errorMessage);
+            }
+        }
+
+        public async Task<DashBoardDTO> getCoach()
+        {
+            try
+            {
+                var coachNameDb = _dbContext.Registration
+                                  .Where(u => u.FlagRole == 5)
+                                  .Select(u => new { u.FirstName, u.Email })
+                                  .FirstOrDefault();
+                if (coachNameDb != null)
+                {
+                    DashBoardDTO dashboard = new DashBoardDTO()
+                    {
+                        coachName = coachNameDb.FirstName,
+                        coachEmail = coachNameDb.Email
+                    };
+
+                    return dashboard;
+                }
+                return null;
+            }
+            catch (Exception ex)
+            {
+                string errorMessage = ex.Message;
+                throw new NotImplementedException(errorMessage);
+            }
+        }
     }
 }

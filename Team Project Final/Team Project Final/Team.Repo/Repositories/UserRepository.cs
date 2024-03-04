@@ -61,8 +61,32 @@ namespace Team.Repo.Repositories
             }
         }
 
+        public async Task<string> updatePassword(string email, string password)
+        {
+            try
+            {
+                var user = await _dbContext.Registration.
+                            Where(u => u.Email == email)
+                            .FirstOrDefaultAsync();
+                if (user != null)
+                {
+                    user.Password = password;
+                    _dbContext.SaveChangesAsync();
+                    user.Password = null;
+                    password = null;
+                    return "Password updated successfully";
+                }
+                else
+                {
+                    return "User not found";
+                }
 
-
-
+            }
+            catch (Exception ex)
+            {
+                string errorMessage = ex.Message;
+                throw new NotImplementedException(errorMessage);
+            }
+        }
     }
 }

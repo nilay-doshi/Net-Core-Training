@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -19,15 +20,19 @@ namespace Team.Service.Service
     {
         private readonly IEmailService _emailService;
         private readonly IPasswordHasher<UserRegistration> _passwordHasher;
+        private readonly IPasswordHasher<UpdatepasswordDTO> _passwordHasher1;
         private readonly IConfiguration _configuration;
         private readonly IUserRepository _userRepository;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public AuthService(IEmailService emailService,IPasswordHasher<UserRegistration> passwordHasher,IUserRepository userRepository,IConfiguration configuration)
+        public AuthService(IEmailService emailService,IPasswordHasher<UserRegistration> passwordHasher,IPasswordHasher<UpdatepasswordDTO> passwordHasher1, IUserRepository userRepository,IConfiguration configuration,IHttpContextAccessor httpContextAccessor)
         {
             _emailService = emailService;
             _passwordHasher = passwordHasher;   
             _userRepository = userRepository;
             _configuration = configuration;
+            _httpContextAccessor = httpContextAccessor;
+            _passwordHasher1 = passwordHasher1;
         }
 
         public async Task<ResponseDTO> Adduser(UserRegistration userRegistration)
@@ -94,14 +99,28 @@ namespace Team.Service.Service
                 {
                     return null;
                 }
-
-                
             }
             catch (Exception ex)
             {
                 return new ResponseDTO { Status = 500, Error = ex.Message };
             }
         }
+
+        public async Task<ResponseDTO> updatepassword(UpdatepasswordDTO updatepassworddto)
+        {
+            if (updatepassworddto == null || string.IsNullOrEmpty(updatepassworddto.newPassword))
+            {
+                return new ResponseDTO { Message = "Enter valid password" };
+            }
+
+                string emailClaim = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(x => x.Type == "email").Value ?? "";
+                updatepassworddto.newPassword = _passwordHasher1.HashPassword(updatepassworddto, updatepassworddto.newPassword);
+                var updatePassword = await _userRepository.updatePassword(emailClaim, updatepassworddto.newPassword);
+                _emailService.SendEmail(emailClaim, "Password changed", "Your password has been updated. Thank You");
+
+                return new ResponseDTO { allData = updatePassword.ToString() };
+        }
+
         private string CreateToken(UserLoginDTO userlogin)
         {
             var user = _userRepository.GetUserByEmail1(userlogin.Email);

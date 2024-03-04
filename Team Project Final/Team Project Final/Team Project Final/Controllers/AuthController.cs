@@ -30,17 +30,17 @@ namespace Team_Project_Final.Controllers
         }
 
         [HttpPost("updatepassword")]
-        public async Task<IActionResult> updatepassword(UpdatepasswordDTO updatePassword)
+        public async Task<IActionResult> updatepassword(UpdatepasswordDTO updatePassworddto)
         {
             try
             {
-                if (updatePassword == null || string.IsNullOrEmpty(updatePassword.newPassword))
-                    return null;
-                return null;
+                var updatePassword = await _authService.updatepassword(updatePassworddto);
+                return Ok(updatePassword);
             }
-            catch
+            catch(Exception ex)
             {
-                return null;
+                string errorMessage = ex.Message;
+                throw new Exception(errorMessage);
             }
         }
 
