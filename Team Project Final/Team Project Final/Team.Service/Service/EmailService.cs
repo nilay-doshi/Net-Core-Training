@@ -5,9 +5,9 @@ using System.Net.Mail;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using teamproject__Service.Interface;
+using Team.Service.Interface;
 
-namespace teamproject__Service.Service
+namespace Team.Service.Service
 {
     public class EmailService : IEmailService
     {

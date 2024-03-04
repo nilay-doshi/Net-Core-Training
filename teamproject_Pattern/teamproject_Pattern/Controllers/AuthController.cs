@@ -4,6 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 using teamproject.Repository.Repository.Models;
 using teamproject.Service.Service.DTO;
 using teamproject.Service.Service.Interface;
+using teamproject__Repository.Models;
+using teamproject__Service.DTO;
+using teamproject__Service.Interface;
 
 namespace teamproject_Pattern.Controllers
 {

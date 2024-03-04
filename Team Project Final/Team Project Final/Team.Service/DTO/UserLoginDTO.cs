@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace teamproject__Service.DTO
+namespace Team.Service.DTO
 {
     public class UserLoginDTO
     {
         public string Email { get; set; }
-        public string Password { get; set; } 
+        public string Password { get; set; }
     }
 }

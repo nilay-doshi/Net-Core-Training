@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using teamproject__Repository.Models;
+using Team.Repo.Models;
 
-namespace teamproject__Service.DTO
+namespace Team.Service.DTO
 {
     public class ResponseDTO
     {
@@ -13,5 +13,7 @@ namespace teamproject__Service.DTO
         public UserRegistration? Data { get; set; }
         public string? Message { get; set; }
         public string? Error { get; set; }
+
+        public string? token { get; set; }
     }
 }
