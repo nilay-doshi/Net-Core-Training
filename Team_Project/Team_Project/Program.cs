@@ -24,6 +24,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidAudience = builder.Configuration["Jwt:Audience"],
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
         };
+        options.MapInboundClaims = false;
     });
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddControllers();
@@ -46,6 +47,7 @@ builder.Services.AddSwaggerGen(options =>
         Type = SecuritySchemeType.ApiKey
 
     });
+    
     options.OperationFilter<SecurityRequirementsOperationFilter>();
 });
 
