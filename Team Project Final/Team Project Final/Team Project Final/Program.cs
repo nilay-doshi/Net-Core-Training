@@ -39,7 +39,6 @@ builder.Services.AddScoped<ITeamRepository, TeamRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ITeamService, TeamService>();
 builder.Services.AddScoped<IPasswordHasher<UserRegistration>, PasswordHasher<UserRegistration>>();
-
 builder.Services.AddScoped<IPasswordHasher<UpdatepasswordDTO>, PasswordHasher<UpdatepasswordDTO>>();
 
 

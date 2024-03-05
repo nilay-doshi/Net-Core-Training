@@ -112,13 +112,19 @@ namespace Team.Service.Service
             {
                 return new ResponseDTO { Message = "Enter valid password" };
             }
+                var emailClam = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(x => x.Type == "email");
+            string emailClaim = null;
+            if (emailClam != null)
+            {
+                 emailClaim = emailClam.Value;
 
-                string emailClaim = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(x => x.Type == "email").Value ?? "";
                 updatepassworddto.newPassword = _passwordHasher1.HashPassword(updatepassworddto, updatepassworddto.newPassword);
                 var updatePassword = await _userRepository.updatePassword(emailClaim, updatepassworddto.newPassword);
                 _emailService.SendEmail(emailClaim, "Password changed", "Your password has been updated. Thank You");
-
                 return new ResponseDTO { allData = updatePassword.ToString() };
+            }
+            return new ResponseDTO { Message = "Error in code" };
+               
         }
 
         private string CreateToken(UserLoginDTO userlogin)
@@ -145,8 +151,5 @@ namespace Team.Service.Service
 
             return jwt;
         }
-
-
-
     }
 }

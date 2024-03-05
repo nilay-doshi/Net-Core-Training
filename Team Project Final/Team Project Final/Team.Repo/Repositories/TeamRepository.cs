@@ -123,10 +123,10 @@ namespace Team.Repo.Repositories
         {
             try
             {
-                var coachNameDb = _dbContext.Registration
+                var coachNameDb = await _dbContext.Registration
                                   .Where(u => u.FlagRole == 5)
                                   .Select(u => new { u.FirstName, u.Email })
-                                  .FirstOrDefault();
+                                  .FirstOrDefaultAsync();
                 if (coachNameDb != null)
                 {
                     DashBoardDTO dashboard = new DashBoardDTO()

@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Team.Repo.Models;
@@ -12,10 +14,11 @@ namespace Team_Project_Final.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;
-        public AuthController(IAuthService authService)
+        
+        public AuthController(IAuthService authService, IHttpContextAccessor httpContextAccessor)
         {
             _authService = authService;
-        }
+         }
 
         [HttpPost("adduser")]
         public async Task<IActionResult> adduser(UserRegistration userRegistration)
@@ -29,6 +32,7 @@ namespace Team_Project_Final.Controllers
             return Ok(await _authService.GetTokenAsync(userlogindto));
         }
 
+        [Authorize]
         [HttpPost("updatepassword")]
         public async Task<IActionResult> updatepassword(UpdatepasswordDTO updatePassworddto)
         {
